@@ -12,9 +12,15 @@ def outlierCleaner(predictions, ages, net_worths):
     """
     
     cleaned_data = []
+    error = predictions - net_worths
+    n = int(len(error)*0.9)
+    # Let's sort the errors and add the original index to know which one they are
+    errors = sorted([(k, v[0]) for k, v in enumerate(error)], key=lambda x: x[1])[:n]
+    for i in range(n):
+        # use the original index to retrieve data from original arrays
+        j = errors[i][0]
+        bundle = ages[j], net_worths[j], predictions[j]
+        cleaned_data.append(bundle)    
 
-    ### your code goes here
-
-    
     return cleaned_data
 
