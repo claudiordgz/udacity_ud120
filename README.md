@@ -12,4 +12,3 @@ $ conda create -n python2 python=2.7 anaconda
 $ source activate python2
 ```
 
-

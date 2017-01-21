@@ -15,6 +15,15 @@ sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 
 
+def featureScaling(arr):
+    m_1, m_2 = min(arr), max(arr)
+    all_same = len(set(arr)) <= 1
+    if all_same:
+        return [0.5 for i in range(len(arr))]
+    else:
+        denominators = [(x - m_1) for x in arr]
+        return [float(x) / float(m_2 - m_1) for x in denominators] 
+
 
 
 def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature 1", f2_name="feature 2"):
@@ -48,11 +57,25 @@ data_dict.pop("TOTAL", 0)
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2]
 data = featureFormat(data_dict, features_list )
 poi, finance_features = targetFeatureSplit( data )
 
+'''
+print(sorted([data_dict[a][feature_1] for a in data_dict]))
+print()
+print(sorted([data_dict[a][feature_2] for a in data_dict]))
+'''
+from sklearn import preprocessing
+min_max_scaler = preprocessing.MinMaxScaler()
+scaled_features = min_max_scaler.fit_transform(finance_features)
+salaries= sorted([x[0] for x in finance_features])
+exercised = sorted([x[1] for x in finance_features])
+
+print(featureScaling([salaries[0], 200000, salaries[-1]]))
+print(featureScaling([exercised[0], 1000000, exercised[-1]]))
 
 ### in the "clustering with 3 features" part of the mini-project,
 ### you'll want to change this line to 
@@ -62,9 +85,13 @@ for f1, f2 in finance_features:
     plt.scatter( f1, f2 )
 plt.show()
 
+
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
-
+from sklearn.cluster import KMeans
+kmeans = KMeans(n_clusters=2)
+kmeans.fit(finance_features)
+pred = kmeans.predict(finance_features)
 
 
 
