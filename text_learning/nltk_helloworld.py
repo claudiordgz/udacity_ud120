@@ -20,3 +20,4 @@ with open("your_word_data.pkl", "r") as f:
     vectorizer = TfidfVectorizer(stop_words = 'english', lowercase=True)
     vectorizer.fit_transform(word_data)
     print(len(vectorizer.get_feature_names()))
+    print(vectorizer.get_feature_names()[33614])
